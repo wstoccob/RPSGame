@@ -7,11 +7,25 @@ internal class Program
         TableGenerator.GenerateTable(args).Write();
     }
 
-    public class RuleDefiner
+    public static class RuleDefiner
     {
-        public void DefineRulesForTable(string[] args)
+        public static string DetermineWinOrLoss(int numberOfMoves, int moveOfTheComputer, int moveOfTheUser)
         {
-
+            int halfOfNumberOfValues = numberOfMoves / 2;
+            int valueOfCell = Math.Sign( (moveOfTheUser - moveOfTheComputer + halfOfNumberOfValues + numberOfMoves)
+                % numberOfMoves - halfOfNumberOfValues);
+            if (valueOfCell == 0)
+            {
+                return "Draw";
+            }
+            else if (valueOfCell == 1)
+            {
+                return "Win";
+            }
+            else
+            {
+                return "Loss";
+            }
         }
     }
 
@@ -41,8 +55,20 @@ internal class Program
         {
             for (int i = 0; i < namesOfMoves.Length; i++)
             {
-                table.AddRow(namesOfMoves[i], "column2", "column3","column4");
+                table.AddRow(GenerateRowData(namesOfMoves, i));
             }
+        }
+        
+        public static string[] GenerateRowData(string[] namesOfMoves, int rowNumber)
+        {
+            string[] rows = new string[namesOfMoves.Length + 1];
+            rows[0] = namesOfMoves[rowNumber];
+            for (int j = 1; j < namesOfMoves.Length + 1; j++)
+            {
+                rows[j] = RuleDefiner.DetermineWinOrLoss(namesOfMoves.Length, rowNumber, j-1);
+            }
+
+            return rows;
         }
 
     }
