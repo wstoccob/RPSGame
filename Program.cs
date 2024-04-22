@@ -18,6 +18,22 @@ internal class Program
             Console.WriteLine("Available moves:");
             PrintAvailableMoves(args);
             string? moveLine = Console.ReadLine();
+
+            if (moveLine == "?")
+            {
+                TableGenerator.GenerateTable(args).Write();
+                continue;
+            }
+
+            int moveNumber;
+            int.TryParse(moveLine, out moveNumber);
+
+            if(moveNumber == 0)
+            {
+                break;
+            }
+
+
         }
 
         // TableGenerator.GenerateTable(args).Write();
