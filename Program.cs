@@ -4,9 +4,34 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        TableGenerator.GenerateTable(args).Write();
+        bool isRunning = true;
+        while (isRunning) 
+        {
+            if (Error.CheckMovesNumber(args))
+            {
+                Console.WriteLine("You entered invalid number of moves. Try to give me odd number of moves more than one! \n" +
+                    "For example: rock paper scissors");
+                break;
+            }
+
+            Console.WriteLine("HMAC hash");
+            Console.WriteLine("Available moves:");
+            PrintAvailableMoves(args);
+            string? moveLine = Console.ReadLine();
+        }
+
+        // TableGenerator.GenerateTable(args).Write();
     }
 
+    public static void PrintAvailableMoves(string[] moves)
+    {
+        for (int i = 0; i < moves.Length; i++)
+        {
+            Console.WriteLine($"{i + 1} - {moves[i]}");
+        }
+        Console.WriteLine("0 - exit");
+        Console.WriteLine("? - help");
+    }
     public static class RuleDefiner
     {
         public static string DetermineWinOrLoss(int numberOfMoves, int moveOfTheComputer, int moveOfTheUser)
@@ -71,6 +96,14 @@ internal class Program
             return rows;
         }
 
+    }
+
+    public static class Error
+    {
+        public static bool CheckMovesNumber(string[] moves)
+        {
+            return moves.Length == 0 || moves.Length % 2 == 0;
+        }
     }
 
 
