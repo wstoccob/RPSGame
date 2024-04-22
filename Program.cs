@@ -21,7 +21,7 @@ internal class Program
         {
             var columns = GenerateColumnNames(namesOfMoves);
             var table = new ConsoleTable(columns);
-            table.Write();
+            FillTableWithData(table, namesOfMoves);
 
             return table;
         }
@@ -36,6 +36,13 @@ internal class Program
             }
 
             return columnNames;
+        }
+        public static void FillTableWithData(ConsoleTable table, string[] namesOfMoves)
+        {
+            for (int i = 0; i < namesOfMoves.Length; i++)
+            {
+                table.AddRow(namesOfMoves[i], "column2", "column3","column4");
+            }
         }
 
     }
