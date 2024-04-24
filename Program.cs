@@ -1,4 +1,5 @@
 ﻿using ConsoleTables;
+using System.Security.Cryptography;
 
 internal class Program
 {
@@ -7,12 +8,14 @@ internal class Program
         bool isRunning = true;
         while (isRunning) 
         {
-            if (Error.CheckMovesNumber(args))
+            if (Error.WrongMoves(args))
             {
                 Console.WriteLine("You entered invalid number of moves. Try to give me odd number of moves more than one! \n" +
                     "For example: rock paper scissors");
                 break;
             }
+
+            int computerMove = Randomiser.RandomMove(args);
 
             Console.WriteLine("HMAC hash");
             Console.WriteLine("Available moves:");
@@ -35,8 +38,6 @@ internal class Program
 
 
         }
-
-        // TableGenerator.GenerateTable(args).Write();
     }
 
     public static void PrintAvailableMoves(string[] moves)
@@ -50,7 +51,7 @@ internal class Program
     }
     public static class RuleDefiner
     {
-        public static string DetermineWinOrLoss(int numberOfMoves, int moveOfTheComputer, int moveOfTheUser)
+        public static string DetermineWinOrLose(int numberOfMoves, int moveOfTheComputer, int moveOfTheUser)
         {
             int halfOfNumberOfValues = numberOfMoves / 2;
             int valueOfCell = Math.Sign( (moveOfTheUser - moveOfTheComputer + halfOfNumberOfValues + numberOfMoves)
@@ -65,7 +66,7 @@ internal class Program
             }
             else
             {
-                return "Loss";
+                return "Lose";
             }
         }
     }
@@ -106,7 +107,7 @@ internal class Program
             rows[0] = namesOfMoves[rowNumber];
             for (int j = 1; j < namesOfMoves.Length + 1; j++)
             {
-                rows[j] = RuleDefiner.DetermineWinOrLoss(namesOfMoves.Length, rowNumber, j-1);
+                rows[j] = RuleDefiner.DetermineWinOrLose(namesOfMoves.Length, rowNumber, j-1);
             }
 
             return rows;
@@ -116,12 +117,35 @@ internal class Program
 
     public static class Error
     {
-        public static bool CheckMovesNumber(string[] moves)
+        public static bool WrongMoves(string[] moves)
         {
             return moves.Length == 0 || moves.Length % 2 == 0;
         }
     }
 
+    public static class HMacSha3
+    {
+        public static string CalculateHMACSHA3(byte[] data, byte[] key)
+        {
+            var hmac = new HMACSHA3_256();
+            hmac.Key = key;
+            byte[] hashValue = hmac.ComputeHash(data);
 
+            return $"HMAC: {BitConverter.ToString(hashValue).Replace("-", "")}";
+        }
+    }
+
+    public static class Randomiser
+    {
+        public static int RandomMove(string[] namesOfMoves)
+        {
+            
+        }
+
+        public static byte[] RandomKey()
+        {
+
+        }
+    }
 
 }
