@@ -16,11 +16,18 @@ internal class Program
             }
 
             int computerMove = Randomiser.RandomMove(args);
+            byte[] keyForHMAC = Randomiser.RandomKey();
+            string hmacHash = HMacSha3.CalculateHMACSHA3(BitConverter.GetBytes(computerMove), keyForHMAC);
 
             Console.WriteLine("HMAC hash");
             Console.WriteLine("Available moves:");
             PrintAvailableMoves(args);
             string? moveLine = Console.ReadLine();
+
+            if (Error.CheckForAppropriateOption(moveLine, args))
+            {
+
+            }
 
             if (moveLine == "?")
             {
@@ -31,7 +38,7 @@ internal class Program
             int moveNumber;
             int.TryParse(moveLine, out moveNumber);
 
-            if(moveNumber == 0)
+            if(moveNumber == -1)
             {
                 break;
             }
@@ -121,17 +128,29 @@ internal class Program
         {
             return moves.Length == 0 || moves.Length % 2 == 0;
         }
+
+        public static bool CheckForAppropriateOption(string? chosenOption, string[] namesOfMoves)
+        {
+            if (!())
+            {
+                return true;
+            }
+            else if ()
+            return true;
+        }
     }
 
     public static class HMacSha3
     {
         public static string CalculateHMACSHA3(byte[] data, byte[] key)
         {
-            var hmac = new HMACSHA3_256();
-            hmac.Key = key;
-            byte[] hashValue = hmac.ComputeHash(data);
+            using (var hmac = new HMACSHA3_256())
+            {
+                hmac.Key = key;
+                byte[] hashValue = hmac.ComputeHash(data);
 
-            return $"HMAC: {BitConverter.ToString(hashValue).Replace("-", "")}";
+                return $"HMAC: {BitConverter.ToString(hashValue).Replace("-", "")}";
+            }
         }
     }
 
@@ -139,11 +158,19 @@ internal class Program
     {
         public static int RandomMove(string[] namesOfMoves)
         {
-            
+            Random _rnd = new Random();
+            int move = _rnd.Next(1, namesOfMoves.Length + 1);
+            return move;
         }
 
         public static byte[] RandomKey()
         {
+            using (RandomNumberGenerator  rnd = RandomNumberGenerator.Create()) 
+            {
+                var key = new byte[512];
+                rnd.GetBytes(key);
+                return key;
+            }
 
         }
     }
