@@ -1,5 +1,9 @@
 ﻿using ConsoleTables;
+using Org.BouncyCastle.Crypto.Digests;
+using Org.BouncyCastle.Crypto.Macs;
+using Org.BouncyCastle.Crypto.Parameters;
 using System.Security.Cryptography;
+using System.Text;
 
 internal class Program
 {
@@ -17,16 +21,17 @@ internal class Program
 
             int computerMove = Randomiser.RandomMove(args);
             byte[] keyForHMAC = Randomiser.RandomKey();
-            string hmacHash = HMacSha3.CalculateHMACSHA3(BitConverter.GetBytes(computerMove), keyForHMAC);
+            string hmacHash = HMacSha3.CalculateHMACSHA3(Encoding.ASCII.GetBytes(args[computerMove]), keyForHMAC);
 
-            Console.WriteLine("HMAC hash");
+            Console.WriteLine(hmacHash);
             Console.WriteLine("Available moves:");
             PrintAvailableMoves(args);
             string? moveLine = Console.ReadLine();
 
             if (Error.CheckForAppropriateOption(moveLine, args))
             {
-
+                Console.WriteLine("You chose inappropriate option. Try to choose something from the list!");
+                break;
             }
 
             if (moveLine == "?")
@@ -36,14 +41,16 @@ internal class Program
             }
 
             int moveNumber;
-            int.TryParse(moveLine, out moveNumber);
+            moveNumber = int.Parse(moveLine) - 1;
 
             if(moveNumber == -1)
             {
                 break;
             }
 
-
+            Console.WriteLine("It is " + RuleDefiner.DetermineWinOrLose(args.Length, computerMove, moveNumber));
+            Console.WriteLine(Convert.ToBase64String(keyForHMAC));
+            Console.WriteLine($"The move was - {args[computerMove]}");
         }
     }
 
@@ -131,12 +138,12 @@ internal class Program
 
         public static bool CheckForAppropriateOption(string? chosenOption, string[] namesOfMoves)
         {
-            if (!())
+            int number;
+            if ( !(int.TryParse(chosenOption, out number) || chosenOption == "0" || chosenOption == "?") )
             {
                 return true;
             }
-            else if ()
-            return true;
+            return false;
         }
     }
 
@@ -144,13 +151,17 @@ internal class Program
     {
         public static string CalculateHMACSHA3(byte[] data, byte[] key)
         {
-            using (var hmac = new HMACSHA3_256())
-            {
-                hmac.Key = key;
-                byte[] hashValue = hmac.ComputeHash(data);
+            var digest = new Sha3Digest(256);
+            var hmac = new HMac(digest);
+            hmac.Init(new KeyParameter(key));
 
-                return $"HMAC: {BitConverter.ToString(hashValue).Replace("-", "")}";
-            }
+            hmac.BlockUpdate(data, 0, data.Length);
+            byte[] result = new byte[hmac.GetMacSize()];
+            hmac.DoFinal(result, 0);
+
+            return BitConverter.ToString(result).Replace("-", "").ToLowerInvariant();
+
+            
         }
     }
 
@@ -159,7 +170,7 @@ internal class Program
         public static int RandomMove(string[] namesOfMoves)
         {
             Random _rnd = new Random();
-            int move = _rnd.Next(1, namesOfMoves.Length + 1);
+            int move = _rnd.Next(0, namesOfMoves.Length);
             return move;
         }
 
@@ -167,7 +178,7 @@ internal class Program
         {
             using (RandomNumberGenerator  rnd = RandomNumberGenerator.Create()) 
             {
-                var key = new byte[512];
+                var key = new byte[256];
                 rnd.GetBytes(key);
                 return key;
             }
