@@ -18,6 +18,11 @@ internal class Program
                     "For example: rock paper scissors");
                 break;
             }
+            if (Error.CheckForRepeatedValue(args))
+            {
+                Console.WriteLine("It seems like you entered some similar values as names of moves. Try to give me distinct names of moves!");
+                break;
+            }
 
             int computerMove = Randomiser.RandomMove(args);
             byte[] keyForHMAC = Randomiser.RandomKey();
@@ -31,7 +36,7 @@ internal class Program
             if (Error.CheckForAppropriateOption(moveLine, args))
             {
                 Console.WriteLine("You chose inappropriate option. Try to choose something from the list!");
-                break;
+                continue;
             }
 
             if (moveLine == "?")
@@ -50,7 +55,7 @@ internal class Program
 
             Console.WriteLine("It is " + RuleDefiner.DetermineWinOrLose(args.Length, computerMove, moveNumber));
             Console.WriteLine(Convert.ToBase64String(keyForHMAC));
-            Console.WriteLine($"The move was - {args[computerMove]}");
+            Console.WriteLine($"The move was - {args[computerMove]} \n \n");
         }
     }
 
@@ -133,13 +138,39 @@ internal class Program
     {
         public static bool WrongMoves(string[] moves)
         {
-            return moves.Length == 0 || moves.Length % 2 == 0;
+            return moves.Length == 0 || moves.Length == 1 || moves.Length % 2 == 0;
         }
 
         public static bool CheckForAppropriateOption(string? chosenOption, string[] namesOfMoves)
         {
             int number;
-            if ( !(int.TryParse(chosenOption, out number) || chosenOption == "0" || chosenOption == "?") )
+            if ( int.TryParse(chosenOption, out number) )
+            {
+                if( number > namesOfMoves.Length || number < 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (chosenOption == "0" || chosenOption == "?")
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
+        public static bool CheckForRepeatedValue(string[] namesOfMoves)
+        {
+            if ( namesOfMoves.Length != namesOfMoves.Distinct().Count())
             {
                 return true;
             }
