@@ -9,37 +9,15 @@ public static class Error
 
     public static bool CheckForAppropriateOption(string? chosenOption, string[] namesOfMoves)
     {
-        int number;
-        if ( int.TryParse(chosenOption, out number) )
+        if ( int.TryParse(chosenOption, out var number) )
         {
-            if( number > namesOfMoves.Length || number < 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return number > namesOfMoves.Length || number < 0;
         }
-        else
-        {
-            if (chosenOption == "0" || chosenOption == "?")
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
+        return chosenOption != "0" && chosenOption != "?";
     }
     
     public static bool CheckForRepeatedValue(string[] namesOfMoves)
     {
-        if ( namesOfMoves.Length != namesOfMoves.Distinct().Count())
-        {
-            return true;
-        }
-        return false;
+        return namesOfMoves.Length != namesOfMoves.Distinct().Count();
     }
 }

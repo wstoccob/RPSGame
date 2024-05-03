@@ -13,7 +13,7 @@ public static class TableGenerator
         return table;
     }
 
-    public static string[] GenerateColumnNames(string[] namesOfMoves)
+    private static string[] GenerateColumnNames(string[] namesOfMoves)
     {
         string[] columnNames = new string[namesOfMoves.Length + 1];
         columnNames[0] = "v PC\\User >";
@@ -24,15 +24,16 @@ public static class TableGenerator
 
         return columnNames;
     }
-    public static void FillTableWithData(ConsoleTable table, string[] namesOfMoves)
+
+    private static void FillTableWithData(ConsoleTable table, string[] namesOfMoves)
     {
         for (int i = 0; i < namesOfMoves.Length; i++)
         {
             table.AddRow(GenerateRowData(namesOfMoves, i));
         }
     }
-        
-    public static string[] GenerateRowData(string[] namesOfMoves, int rowNumber)
+
+    private static string[] GenerateRowData(string[] namesOfMoves, int rowNumber)
     {
         string[] rows = new string[namesOfMoves.Length + 1];
         rows[0] = namesOfMoves[rowNumber];

@@ -7,17 +7,12 @@ public static class RuleDefiner
         int halfOfNumberOfValues = numberOfMoves / 2;
         int valueOfCell = Math.Sign( (moveOfTheUser - moveOfTheComputer + halfOfNumberOfValues + numberOfMoves)
             % numberOfMoves - halfOfNumberOfValues);
-        if (valueOfCell == 0)
+        return valueOfCell switch
         {
-            return "Draw";
-        }
-        else if (valueOfCell == 1)
-        {
-            return "Win";
-        }
-        else
-        {
-            return "Lose";
-        }
+            0 => "Draw",
+            1 => "Win",
+            -1 => "Lose",
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 }

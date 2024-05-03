@@ -17,7 +17,5 @@ public static class HMacSha3
         hmac.DoFinal(result, 0);
 
         return BitConverter.ToString(result).Replace("-", "").ToLowerInvariant();
-
-            
     }
 }
